@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 import "./AuthorQuiz.css";
 import "./bootstrap.min.css";
 
@@ -33,7 +34,7 @@ function Turn({ author, books, highlight, onAnswerSelected }) {
     const mapping = {
       none: "",
       correct: "green",
-      wrong: "red"
+      wrong: "red",
     };
     return mapping[highlight];
   }
@@ -46,7 +47,7 @@ function Turn({ author, books, highlight, onAnswerSelected }) {
         <img src={author.imageUrl} className="authorimage" alt="Author" />
       </div>
       <div className="col-6">
-        {books.map(title => (
+        {books.map((title) => (
           <Book key={title} title={title} onClick={onAnswerSelected} />
         ))}
       </div>
@@ -59,11 +60,11 @@ Turn.propTypes = {
     name: PropTypes.string.isRequired,
     imageUrl: PropTypes.string.isRequired,
     imageSource: PropTypes.string.isRequired,
-    books: PropTypes.arrayOf(PropTypes.string).isRequired
+    books: PropTypes.arrayOf(PropTypes.string).isRequired,
   }),
   books: PropTypes.arrayOf(PropTypes.string).isRequired,
   onAnswerSelected: PropTypes.func.isRequired,
-  highlight: PropTypes.string.isRequired
+  highlight: PropTypes.string.isRequired,
 };
 
 function Continue({ show, onContinue }) {
@@ -99,7 +100,30 @@ function Footer() {
   );
 }
 
-function AuthorQuiz({ turnData, highlight, onAnswerSelected, onContinue }) {
+//data properties
+function mapStateToProps(state) {
+  return {
+    turnData: state.turnData,
+    highlight: state.highlight,
+  };
+}
+
+//event properties
+function mapDispatchToProps(dispatch) {
+  return {
+    onAnswerSelected: (answer) => {
+      dispatch({ type: "ANSWER_SELECTED", answer });
+    },
+    onContinue: () => {
+      dispatch({ type: "CONTINUE" });
+    },
+  };
+}
+
+const AuthorQuiz = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(function ({ turnData, highlight, onAnswerSelected, onContinue }) {
   return (
     <div className="container-fluid">
       <Hero />
@@ -115,6 +139,6 @@ function AuthorQuiz({ turnData, highlight, onAnswerSelected, onContinue }) {
       <Footer />
     </div>
   );
-}
+});
 
 export default AuthorQuiz;

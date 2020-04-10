@@ -1,4 +1,6 @@
 import React from "react";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import "./AddAuthorForm.css";
 
 class AuthorForm extends React.Component {
@@ -8,7 +10,7 @@ class AuthorForm extends React.Component {
       name: "",
       imageUrl: "",
       books: [],
-      bookTemp: ""
+      bookTemp: "",
     };
     this.onFieldChange = this.onFieldChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -22,14 +24,14 @@ class AuthorForm extends React.Component {
 
   onFieldChange(event) {
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     });
   }
 
   handleAddBook(event) {
     this.setState({
       books: this.state.books.concat([this.state.bookTemp]),
-      bookTemp: ""
+      bookTemp: "",
     });
   }
 
@@ -56,7 +58,7 @@ class AuthorForm extends React.Component {
         </div>
         <div className="AddAuthorForm__input">
           <label htmlFor="bookTemp">Books</label>
-          {this.state.books.map(book => (
+          {this.state.books.map((book) => (
             <p key={book}>{book}</p>
           ))}
           <input
@@ -87,4 +89,13 @@ function AddAuthorForm({ match, onAddAuthor }) {
   );
 }
 
-export default AddAuthorForm;
+function mapDispatchToProps(dispatch, props) {
+  return {
+    onAddAuthor: (author) => {
+      dispatch({ type: "ADD_AUTHOR", author });
+      props.history.push("/");
+    },
+  };
+}
+
+export default withRouter(connect(() => {}, mapDispatchToProps)(AddAuthorForm));
