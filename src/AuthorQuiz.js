@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import "./AuthorQuiz.css";
 import "./bootstrap.min.css";
 
@@ -27,7 +28,7 @@ function Book({ title, onClick }) {
   );
 }
 
-function Turn({ author, books, highlight, onAnsrSelected }) {
+function Turn({ author, books, highlight, onAnswerSelected }) {
   function highlightBgColor(highlight) {
     const mapping = {
       none: "",
@@ -46,7 +47,7 @@ function Turn({ author, books, highlight, onAnsrSelected }) {
       </div>
       <div className="col-6">
         {books.map(title => (
-          <Book key={title} title={title} onClick={onAnsrSelected} />
+          <Book key={title} title={title} onClick={onAnswerSelected} />
         ))}
       </div>
     </div>
@@ -61,12 +62,25 @@ Turn.propTypes = {
     books: PropTypes.arrayOf(PropTypes.string).isRequired
   }),
   books: PropTypes.arrayOf(PropTypes.string).isRequired,
-  onAnsrSelected: PropTypes.func.isRequired,
+  onAnswerSelected: PropTypes.func.isRequired,
   highlight: PropTypes.string.isRequired
 };
 
-function Continue() {
-  return <div />;
+function Continue({ show, onContinue }) {
+  return (
+    <div className="row continue">
+      {show ? (
+        <div className="col-11">
+          <button
+            className="btn btn-primary btn-lg float-right"
+            onClick={onContinue}
+          >
+            Continue
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 function Footer() {
@@ -85,16 +99,19 @@ function Footer() {
   );
 }
 
-function AuthorQuiz({ turnData, highlight, onAnsrSelected }) {
+function AuthorQuiz({ turnData, highlight, onAnswerSelected, onContinue }) {
   return (
     <div className="container-fluid">
       <Hero />
       <Turn
         {...turnData}
         highlight={highlight}
-        onAnsrSelected={onAnsrSelected}
+        onAnswerSelected={onAnswerSelected}
       />
-      <Continue />
+      <Continue show={highlight === "correct"} onContinue={onContinue} />
+      <p>
+        <Link to="/add">Add an Author</Link>
+      </p>
       <Footer />
     </div>
   );
